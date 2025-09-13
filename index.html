@@ -1,0 +1,15 @@
+<script src="pre-wasm.js"></script>
+<script src="./dist/app.js"></script>
+<script src="main.js"></script>
+<body>
+    <h1>Hello World, er... Chris</h1>
+    <form>
+        <input id="fontFile" type="file"></input>
+        <input id="charInput" type="text" maxlength="2" value="A" style="width:2em;">
+        <label for="charInput">Character</label>
+    </form>
+    <button onclick="say_hello()">hello</button>
+    <div id='text'>
+        <canvas id="glyph-canvas"></canvas>
+    </div>
+</body>
