@@ -1,15 +1,63 @@
 <script src="pre-wasm.js"></script>
 <script src="./dist/app.js"></script>
 <script src="main.js"></script>
+<style>
+    /* Simple layout and modal styles */
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; margin: 16px; }
+    .container { display: flex; gap: 24px; align-items: flex-start; }
+    .controls { width: 260px; padding: 12px; border: 1px solid #eee; border-radius: 8px; background: #fafafa; }
+    .controls h2 { margin-top: 0; font-size: 1.1rem; }
+    .controls label { display: inline-block; margin-left: 6px; }
+    #charInput { width: 2.4em; }
+    #glyph-pane { flex: 1; }
+    #glyph-canvas { border: 1px solid #ddd; background: white; display: block; }
+
+    /* Modal */
+    .modal-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.4); display: none; align-items: center; justify-content: center; }
+    .modal { background: white; padding: 18px; border-radius: 8px; max-width: 480px; width: 90%; box-shadow: 0 8px 24px rgba(0,0,0,0.2); }
+    .modal h3 { margin: 0 0 8px 0; }
+    .modal pre { background: #f6f7f8; padding: 8px; border-radius: 4px; overflow: auto; }
+    .modal .actions { text-align: right; margin-top: 12px; }
+    .btn { padding: 6px 10px; border-radius: 6px; border: 1px solid #ccc; background: #fff; cursor: pointer; }
+    .btn.primary { background: #0366d6; color: white; border-color: #0356b6; }
+</style>
 <body>
-    <h1>Hello World, er... Chris</h1>
-    <form>
-        <input id="fontFile" type="file"></input>
-        <input id="charInput" type="text" maxlength="2" value="A" style="width:2em;">
-        <label for="charInput">Character</label>
-    </form>
-    <button onclick="say_hello()">hello</button>
-    <div id='text'>
-        <canvas id="glyph-canvas"></canvas>
+    <h1>Font Analyzer</h1>
+    <div class="container">
+        <div class="controls" role="region" aria-label="Controls">
+            <h2>Input</h2>
+            <form id="font-form" onsubmit="return false;">
+                <div>
+                    <input id="fontFile" type="file"></input>
+                </div>
+                <div style="margin-top:10px;">
+                    <input id="charInput" type="text" maxlength="2" value="A">
+                    <label for="charInput">Character</label>
+                </div>
+                <div style="margin-top:12px; display:flex; gap:8px;">
+                    <button id="analyze-btn" class="btn primary" type="button" onclick="say_hello()">Analyze</button>
+                    <button id="font-ratios-btn" class="btn" type="button">Font Ratios</button>
+                </div>
+            </form>
+            <div style="margin-top:12px; color:#666; font-size:0.9rem;">Drop a TTF/OTF file, then click Analyze.</div>
+        </div>
+
+        <div id="glyph-pane">
+            <h2>Glyph</h2>
+            <canvas id="glyph-canvas" width="200" height="200"></canvas>
+            <div id="ratios-container" style="margin-top:12px;"></div>
+        </div>
+    </div>
+
+    <!-- Modal for errors -->
+    <div id="error-modal" class="modal-backdrop" role="dialog" aria-modal="true" aria-hidden="true">
+        <div class="modal" role="document">
+            <h3>Error</h3>
+            <div id="error-message">An unknown error occurred.</div>
+            <pre id="error-details" style="display:none"></pre>
+            <div class="actions">
+                <button id="error-close" class="btn">Close</button>
+            </div>
+        </div>
     </div>
 </body>
